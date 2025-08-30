@@ -10,9 +10,7 @@ import com.example.oralvis.ui.screens.utils.EnsureCameraAndReadPermissions
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class CameraRoute(
-    val sessionId:String=""
-)
+data object CameraRoute
 
 
 fun NavGraphBuilder.cameraDestination(
@@ -21,15 +19,14 @@ fun NavGraphBuilder.cameraDestination(
     composable<CameraRoute> {
         EnsureCameraAndReadPermissions {
             CameraScreen(
-                sessionId = "default_session",
-                modifier = Modifier.fillMaxSize()
+                onComplete=onComplete
             )
         }
     }
 }
 
-fun NavController.navigateToCameraScreen(sessionName:String) {
+fun NavController.navigateToCameraScreen() {
     this.navigate(
-        CameraRoute(sessionName),
+        CameraRoute,
     )
 }

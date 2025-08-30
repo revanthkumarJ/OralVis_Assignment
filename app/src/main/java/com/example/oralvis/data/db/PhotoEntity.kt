@@ -10,7 +10,7 @@ import androidx.room.PrimaryKey
     foreignKeys = [
         ForeignKey(
             entity = SessionEntity::class,
-            parentColumns = ["sessionId"],
+            parentColumns = ["id"],
             childColumns = ["sessionOwnerId"],
             onDelete = ForeignKey.CASCADE
         )
@@ -19,7 +19,7 @@ import androidx.room.PrimaryKey
 )
 data class PhotoEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val sessionOwnerId: String,
+    val sessionOwnerId: Long,
     val contentUri: String,
     val timestamp: Long = System.currentTimeMillis()
 )

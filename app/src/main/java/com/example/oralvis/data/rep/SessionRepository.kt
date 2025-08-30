@@ -10,17 +10,24 @@ class SessionRepository(
     private val sessionDao: SessionDao,
     private val photoDao: PhotoDao,
 ) {
-    suspend fun startSession(id: String) {
-        sessionDao.insert(SessionEntity(sessionId = id))
+    suspend fun startSession(name: String,sessionId:String,age:Int):Long {
+        return sessionDao.insert(SessionEntity(name=name, sessionId = sessionId,age=age))
     }
 
 
-    suspend fun endSession(id: String, name: String, age: Int) {
-        sessionDao.endSession(id, name, age, System.currentTimeMillis())
+    suspend fun updateSession(id: Long, sessionId: String,name: String,age:Int,totalPhotos:Long) {
+        sessionDao.updateSession(
+            id=id,
+            sessionId=sessionId,
+            name= name,
+            age=age,
+            endedAt =  System.currentTimeMillis(),
+            total=totalPhotos
+        )
     }
 
 
-    suspend fun addPhoto(sessionId: String, uri: Uri) {
+    suspend fun addPhoto(sessionId: Long, uri: Uri) {
         photoDao.insert(
             PhotoEntity(
                 sessionOwnerId = sessionId,
@@ -35,4 +42,6 @@ class SessionRepository(
         val photos = photoDao.forSession(id)
         return s to photos
     }
+
+    fun observeAllSessions() = sessionDao.observeAllSessions()
 }

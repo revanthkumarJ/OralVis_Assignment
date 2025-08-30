@@ -5,9 +5,11 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "sessions")
 data class SessionEntity(
-    @PrimaryKey val sessionId: String,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val sessionId:String?=null,
     val name: String? = null,
-    val age: Int? = null,
+    val age:Int?=null,
     val startedAt: Long = System.currentTimeMillis(),
-    val endedAt: Long? = null
+    val updatedAt: Long? = null,
+    val totalPhotos:Long=0L
 )

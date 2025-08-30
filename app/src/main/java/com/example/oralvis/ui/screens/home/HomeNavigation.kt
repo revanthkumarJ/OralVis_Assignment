@@ -16,9 +16,10 @@ fun NavGraphBuilder.homeDestination(
     onComplete: () -> Unit,
 ) {
     composable<HomeRoute> {
-        HomeScreen {
-            onComplete()
-        }
+        HomeScreen(
+            onStartCamera = onComplete,
+            onOpenSession = {},
+        )
     }
 }
 
