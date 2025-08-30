@@ -14,11 +14,12 @@ data object HomeRoute
 
 fun NavGraphBuilder.homeDestination(
     onComplete: () -> Unit,
+    onOpenSession:(Long)->Unit
 ) {
     composable<HomeRoute> {
         HomeScreen(
             onStartCamera = onComplete,
-            onOpenSession = {},
+            onOpenSession = onOpenSession,
         )
     }
 }

@@ -6,6 +6,7 @@ import com.example.oralvis.data.db.AppDatabase
 import com.example.oralvis.data.rep.SessionRepository
 import com.example.oralvis.ui.screens.camera.CameraViewModel
 import com.example.oralvis.ui.screens.home.HomeViewModel
+import com.example.oralvis.ui.screens.session_detail.SessionDetailViewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
 
@@ -24,4 +25,5 @@ val appModule = module {
 
     viewModelOf(::CameraViewModel)
     viewModelOf(::HomeViewModel)
+    viewModelOf(::SessionDetailViewModel)
 }

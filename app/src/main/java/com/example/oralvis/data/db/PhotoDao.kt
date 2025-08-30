@@ -12,5 +12,5 @@ interface PhotoDao {
 
 
     @Query("SELECT * FROM photos WHERE sessionOwnerId=:sessionId ORDER BY timestamp ASC")
-    suspend fun forSession(sessionId: String): List<PhotoEntity>
+    suspend fun forSession(sessionId: Long): List<PhotoEntity>
 }

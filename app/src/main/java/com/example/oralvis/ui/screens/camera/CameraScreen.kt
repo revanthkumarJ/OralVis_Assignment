@@ -126,14 +126,16 @@ fun CameraScreen(
                                 value = state.sessionId,
                                 onValueChange = { viewModel.trySendAction(CameraAction.OnSessionIdChange(it)) },
                                 modifier = Modifier.fillMaxWidth(),
-                                placeholder = { Text("Session Id") }
+                                placeholder = { Text("Session Id") },
+                                label={Text("Session Id")}
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             OutlinedTextField(
                                 value = state.sessionName,
                                 onValueChange = { viewModel.trySendAction(CameraAction.OnSessionNameChange(it)) },
                                 modifier = Modifier.fillMaxWidth(),
-                                placeholder = { Text("Session Name") }
+                                placeholder = { Text("Session Name") },
+                                label={ Text("Session Name")}
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             OutlinedTextField(
@@ -145,7 +147,8 @@ fun CameraScreen(
                                 },
                                 modifier = Modifier.fillMaxWidth(),
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                placeholder = { Text("Session Age") }
+                                placeholder = { Text("Session Age") },
+                                label={ Text("Session Age")}
                             )
                             if (state.isUploading) {
                                 Spacer(modifier = Modifier.height(16.dp))

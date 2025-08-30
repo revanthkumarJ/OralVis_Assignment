@@ -15,6 +15,8 @@ import com.example.oralvis.ui.screens.utils.EnsureCameraAndReadPermissions
 import com.example.oralvis.ui.screens.home.HomeScreen
 import com.example.oralvis.ui.screens.home.homeDestination
 import com.example.oralvis.ui.screens.home.navigateToHomeScreen
+import com.example.oralvis.ui.screens.session_detail.navigateToSessionDetailScreen
+import com.example.oralvis.ui.screens.session_detail.sessionDetailDestination
 
 @Composable
 fun AppNavHost() {
@@ -23,11 +25,14 @@ fun AppNavHost() {
     NavHost(navController = navController, startDestination = HomeRoute) {
 
         homeDestination(
-            onComplete = navController::navigateToCameraScreen
+            onComplete = navController::navigateToCameraScreen,
+            onOpenSession = navController::navigateToSessionDetailScreen
         )
 
         cameraDestination(
             onComplete = navController::navigateToHomeScreen
         )
+
+        sessionDetailDestination()
     }
 }

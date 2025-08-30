@@ -37,7 +37,7 @@ class SessionRepository(
     }
 
 
-    suspend fun getSession(id: String): Pair<SessionEntity, List<PhotoEntity>>? {
+    suspend fun getSession(id: Long): Pair<SessionEntity, List<PhotoEntity>>? {
         val s = sessionDao.get(id) ?: return null
         val photos = photoDao.forSession(id)
         return s to photos
