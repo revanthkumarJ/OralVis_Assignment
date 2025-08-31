@@ -11,6 +11,7 @@ import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.oralvis.data.db.SessionEntity
 import com.example.oralvis.ui.screens.utils.EventsEffect
@@ -79,25 +80,35 @@ fun HomeScreen(
             } else {
                 if (state.sessions.isEmpty()) {
                     Text(
-                        "No sessions yet. Click the + button to start one.",
+                        text="No sessions yet. Click the + button to start one.",
                         modifier = Modifier.padding(16.dp)
                     )
                 } else {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(
-                            state.sessions.filter {
-                                it.sessionId?.contains(state.query, ignoreCase = true) ?: false
-                            }
-                        ) { session ->
-                            SessionItem(session) {
-                                viewModel.trySendAction(HomeAction.OpenSession(session.id))
+                    val filteredData=state.sessions.filter {
+                        it.sessionId?.contains(state.query, ignoreCase = true) ?: false
+                    }
+                    if(filteredData.isEmpty()){
+                        Text(
+                            text="No sessions found for given search",
+                            modifier = Modifier.padding(16.dp)
+                        )
+                    }
+                    else{
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            items(
+                                filteredData
+                            ) { session ->
+                                SessionItem(session) {
+                                    viewModel.trySendAction(HomeAction.OpenSession(session.id))
+                                }
                             }
                         }
                     }
+
                 }
             }
         }

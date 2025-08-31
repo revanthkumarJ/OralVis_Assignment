@@ -5,7 +5,11 @@ import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -14,7 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun EnsureCameraAndReadPermissions(content: @Composable () -> Unit) {
@@ -27,9 +31,7 @@ fun EnsureCameraAndReadPermissions(content: @Composable () -> Unit) {
 
     val readLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
-    ) { granted ->
-        readGranted.value = granted
-    }
+    ) { granted -> readGranted.value = granted }
 
     val cameraLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -52,12 +54,23 @@ fun EnsureCameraAndReadPermissions(content: @Composable () -> Unit) {
     if (cameraGranted.value && readGranted.value) {
         content()
     } else {
-        // Show message if any permission is not granted
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            Text("Give permission to continue")
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text("Give permission to continue")
+                Spacer(modifier = Modifier.height(8.dp))
+                Button(onClick = {
+                    if (!cameraGranted.value) {
+                        cameraLauncher.launch(Manifest.permission.CAMERA)
+                    } else if (!readGranted.value) {
+                        readLauncher.launch(readPermission)
+                    }
+                }) {
+                    Text("Grant Permissions")
+                }
+            }
         }
     }
 }
