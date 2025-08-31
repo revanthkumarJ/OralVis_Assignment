@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,7 +40,12 @@ fun HomeScreen(
     Scaffold(
         topBar = {
             Column {
-                TopAppBar(title = { Text("OralVis") })
+                TopAppBar(
+                    title = { Text("OralVis") },
+                    colors = topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.background
+                    )
+                )
                 OutlinedTextField(
                     value = state.query,
                     onValueChange = { viewModel.trySendAction(HomeAction.UpdateQuery(it)) },

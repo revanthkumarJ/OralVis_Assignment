@@ -27,5 +27,8 @@ fun NavGraphBuilder.homeDestination(
 fun NavController.navigateToHomeScreen() {
     this.navigate(
         HomeRoute,
-    )
+    ){
+        popUpTo(0) { inclusive = true } // clears the whole backstack
+        launchSingleTop = true          // avoid multiple copies of HomeRoute
+    }
 }

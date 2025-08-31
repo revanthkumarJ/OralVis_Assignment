@@ -39,10 +39,8 @@ fun CameraScreen(
 
     val state by viewModel.stateFlow.collectAsStateWithLifecycle()
 
-    // Handle one-time events
     EventsEffect(viewModel.eventFlow) { event ->
         when (event) {
-            is CameraEvent.PhotoCaptured -> Log.d("CameraScreen", "Photo captured")
             CameraEvent.SessionEnded -> onComplete()
         }
     }
@@ -72,7 +70,6 @@ fun CameraScreen(
         Box(Modifier.fillMaxSize().padding(padding)) {
             CameraPreview(controller, modifier = Modifier.fillMaxSize())
 
-            // Switch camera button
             IconButton(
                 onClick = {
                     controller.cameraSelector =
@@ -87,7 +84,6 @@ fun CameraScreen(
                 Icon(Icons.Default.Cameraswitch, contentDescription = "Switch camera")
             }
 
-            // End Session button
             Button(
                 onClick = { viewModel.trySendAction(CameraAction.EndSessionClick) },
                 modifier = Modifier
@@ -98,7 +94,6 @@ fun CameraScreen(
                 Text("End Session (${state.photoCount})")
             }
 
-            // Flash effect
             if (flashVisible) {
                 val alpha by animateFloatAsState(targetValue = 1f, animationSpec = tween(100))
                 Box(
@@ -113,7 +108,6 @@ fun CameraScreen(
                 }
             }
 
-            // End session dialog
             if (state.showDialog) {
                 AlertDialog(
                     onDismissRequest = {},
@@ -150,6 +144,13 @@ fun CameraScreen(
                                 placeholder = { Text("Session Age") },
                                 label={ Text("Session Age")}
                             )
+                            if(state.error.isNotEmpty()){
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = state.error,
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            }
                             if (state.isUploading) {
                                 Spacer(modifier = Modifier.height(16.dp))
                                 LinearProgressIndicator(modifier = Modifier.fillMaxWidth())

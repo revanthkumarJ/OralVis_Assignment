@@ -12,9 +12,11 @@ data class SessionDetailRoute(
 
 
 fun NavGraphBuilder.sessionDetailDestination(
+    navController: NavController
 ) {
     composable<SessionDetailRoute> {
         SessionDetailScreen(
+            onBackClick = { navController.popBackStack() }
         )
     }
 }

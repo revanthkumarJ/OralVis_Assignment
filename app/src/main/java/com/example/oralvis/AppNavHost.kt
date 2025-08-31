@@ -33,6 +33,8 @@ fun AppNavHost() {
             onComplete = navController::navigateToHomeScreen
         )
 
-        sessionDetailDestination()
+        sessionDetailDestination(
+            navController
+        )
     }
 }

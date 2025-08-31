@@ -66,20 +66,16 @@ class CameraViewModel(
                                 )
                             }
 
-                            sendEvent(CameraEvent.PhotoCaptured(bitmap))
                         } catch (e: Exception) {
                             Log.e("CameraViewModel", "Capture error", e)
                         } finally {
-                            withContext(Dispatchers.Main) {
-                                mutableStateFlow.update { it.copy(isCapturing = false) }
-                            }
+                            mutableStateFlow.update { it.copy(isCapturing = false) }
                             image.close()
                         }
                     }
                 }
 
                 override fun onError(exception: ImageCaptureException) {
-                    Log.e("CameraViewModel", "Capture failed: ${exception.message}")
                     mutableStateFlow.update { it.copy(isCapturing = false) }
                 }
             }
@@ -95,42 +91,68 @@ class CameraViewModel(
     }
 
     private fun endSession(context: Context) {
-        viewModelScope.launch(Dispatchers.IO) {
-            mutableStateFlow.update { it.copy(isUploading = true) }
 
-            try {
-                val currentState = mutableStateFlow.value
-                val sessionId = repository.startSession(
-                    name = currentState.sessionName,
-                    sessionId = currentState.sessionId,
-                    age = currentState.sessionAge
+        if(state.sessionId.isEmpty()){
+            mutableStateFlow.update {
+                it.copy(
+                    error = "Session Id cannot be empty"
                 )
-
-                currentState.photos.forEach { bitmap ->
-                    val uri = saveImageToMediaStore(context, bitmap, currentState.sessionName)
-                    if (uri != null) {
-                        repository.addPhoto(sessionId, uri)
-                    }
-                }
-
-                repository.updateSession(
-                    id = sessionId,
-                    sessionId = currentState.sessionId,
-                    name = currentState.sessionName,
-                    totalPhotos = currentState.photos.size.toLong(),
-                    age = currentState.sessionAge
-                )
-
-                mutableStateFlow.update { it.copy(showDialog = false, isUploading = false) }
-                sendEvent(CameraEvent.SessionEnded)
-            } catch (e: Exception) {
-                Log.e("CameraViewModel", "Failed to end session", e)
-                mutableStateFlow.update { it.copy(isUploading = false) }
             }
         }
+        else if(state.sessionName.isEmpty()){
+            mutableStateFlow.update {
+                it.copy(
+                    error = "Session Name cannot be empty"
+                )
+            }
+        }
+        else if(state.sessionAge==0){
+            mutableStateFlow.update {
+                it.copy(
+                    error = "Session Age cannot be empty"
+                )
+            }
+        }
+        else{
+            viewModelScope.launch(Dispatchers.IO) {
+                mutableStateFlow.update { it.copy(isUploading = true, error = "") }
+
+                try {
+                    val currentState = mutableStateFlow.value
+                    val sessionId = repository.startSession(
+                        name = currentState.sessionName,
+                        sessionId = currentState.sessionId,
+                        age = currentState.sessionAge
+                    )
+
+                    currentState.photos.forEach { bitmap ->
+                        try {
+                            val uri = saveImageToMediaStore(context, bitmap, currentState.sessionName)
+                            if (uri != null) {
+                                val repo = repository.addPhoto(sessionId, uri)
+                            }
+                        } catch (e: Exception) { }
+                    }
+
+                    repository.updateSession(
+                        id = sessionId,
+                        sessionId = currentState.sessionId,
+                        name = currentState.sessionName,
+                        totalPhotos = currentState.photos.size.toLong(),
+                        age = currentState.sessionAge
+                    )
+
+                    mutableStateFlow.update { it.copy(showDialog = false, isUploading = false) }
+                    sendEvent(CameraEvent.SessionEnded)
+                } catch (e: Exception) {
+                    mutableStateFlow.update { it.copy(isUploading = false) }
+                }
+            }
+        }
+
+
     }
 
-    // --- Helpers ---
     private fun Bitmap.rotate(degrees: Int): Bitmap {
         val matrix = Matrix().apply { postRotate(degrees.toFloat()) }
         return Bitmap.createBitmap(this, 0, 0, width, height, matrix, true)
@@ -161,7 +183,6 @@ class CameraViewModel(
             }
             uri
         } catch (e: Exception) {
-            Log.e("CameraViewModel", "Failed to save image", e)
             null
         }
 }
@@ -173,6 +194,7 @@ data class CameraUiState(
     val sessionName: String = "",
     val sessionId: String = "",
     val sessionAge: Int = 0,
+    val error:String="",
     val photos: List<Bitmap> = emptyList(),
     val photoCount: Long = 0,
     val isCapturing: Boolean = false,
@@ -181,7 +203,6 @@ data class CameraUiState(
 )
 
 sealed interface CameraEvent {
-    data class PhotoCaptured(val photo: Bitmap) : CameraEvent
     object SessionEnded : CameraEvent
 }
 

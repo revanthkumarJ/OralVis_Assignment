@@ -1,6 +1,6 @@
 package com.example.oralvis.ui.screens.session_detail
 
-import android.net.Uri
+
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
@@ -16,7 +16,7 @@ class SessionDetailViewModel(
     val savedStateHandle: SavedStateHandle
 ) : BaseViewModel<SessionDetailState, SessionDetailEvent, SessionDetailAction>(SessionDetailState()) {
 
-    val sessionId=savedStateHandle.toRoute<SessionDetailRoute>().sessionId
+    val sessionId = savedStateHandle.toRoute<SessionDetailRoute>().sessionId
 
     init {
         trySendAction(SessionDetailAction.LoadSession)
@@ -36,32 +36,37 @@ class SessionDetailViewModel(
                                 loading = false
                             )
                         }
-                    } else {
-                        sendEvent(SessionDetailEvent.SessionNotFound)
                     }
                 }
             }
+
             is SessionDetailAction.Refresh -> {
                 trySendAction(SessionDetailAction.LoadSession)
+            }
+
+            is SessionDetailAction.ShowPhotoDialog -> {
+                mutableStateFlow.update { it.copy(selectedPhoto = action.photo) }
+            }
+
+            SessionDetailAction.DismissPhotoDialog -> {
+                mutableStateFlow.update { it.copy(selectedPhoto = null) }
             }
         }
     }
 }
 
-// State
 data class SessionDetailState(
     val loading: Boolean = true,
     val session: SessionEntity? = null,
-    val photos: List<PhotoEntity> = emptyList()
+    val photos: List<PhotoEntity> = emptyList(),
+    val selectedPhoto: PhotoEntity? = null
 )
 
-// Actions
 sealed interface SessionDetailAction {
     object LoadSession : SessionDetailAction
     object Refresh : SessionDetailAction
+    data class ShowPhotoDialog(val photo: PhotoEntity) : SessionDetailAction
+    object DismissPhotoDialog : SessionDetailAction
 }
 
-// Events
-sealed interface SessionDetailEvent {
-    object SessionNotFound : SessionDetailEvent
-}
+sealed interface SessionDetailEvent

@@ -11,11 +11,11 @@ interface SessionDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insert(session: SessionEntity):Long
 
-    @Query("UPDATE sessions SET sessionId=:sessionId, name=:name, age=:age, updatedAt=:endedAt, totalPhotos=:total WHERE sessionId=:id")
+    @Query("UPDATE sessions SET sessionId=:sessionId, name=:name, age=:age, updatedAt=:endedAt, totalPhotos=:total WHERE id=:id")
     suspend fun updateSession(id: Long,sessionId:String, name: String, age:Int,endedAt: Long,total:Long)
 
 
-    @Query("SELECT * FROM sessions WHERE sessionId=:id")
+    @Query("SELECT * FROM sessions WHERE id=:id")
     suspend fun get(id: Long): SessionEntity?
 
     @Query("SELECT * FROM sessions ORDER BY startedAt DESC")
