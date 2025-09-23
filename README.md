@@ -1,4 +1,3 @@
-#Currently I am using this repo to check github actions and CI/CD
 
 # OralVis - Session-based Camera App
 
